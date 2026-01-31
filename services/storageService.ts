@@ -42,7 +42,7 @@ export const storageService = {
         logoUrl: "https://i.ibb.co/Xkh0f6Bv/logo-A-N-M-V.jpg",
         establishmentDate: "1961-01-01",
         censusNo: "19519",
-        principalName: "N.M. ASARUDEEN (SLTS)",
+        principalName: "A.J.M. Thawfeek (SLPS)",
         educationalDistrict: "Anuradhapura",
         schoolZone: "Horowpothana",
         nearestSchool: "Nikawewa Sinhala Vidyalaya",

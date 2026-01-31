@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { User, UserRole } from '../types';
 import { storageService } from '../services/storageService';
 
@@ -12,6 +12,8 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ user, onUpdate }) => {
   const [activeTab, setActiveTab] = useState<'personal' | 'service' | 'academic' | 'residential'>('personal');
   const [isEditing, setIsEditing] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [tempProfilePic, setTempProfilePic] = useState<string | undefined>(user.profilePic);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Helper to calculate Y/M/D from a date string
   const calculatePeriod = (dateStr?: string) => {
@@ -35,6 +37,17 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ user, onUpdate }) => {
     return `${years}Y ${months}M ${days}D`;
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setTempProfilePic(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const teacherAge = useMemo(() => calculatePeriod(user.dob), [user.dob]);
   const totalService = useMemo(() => calculatePeriod(user.firstAppointmentDate), [user.firstAppointmentDate]);
   const schoolService = useMemo(() => calculatePeriod(user.presentSchoolJoinDate), [user.presentSchoolJoinDate]);
@@ -46,6 +59,7 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ user, onUpdate }) => {
     
     const updatedUser: User = {
       ...user,
+      profilePic: tempProfilePic,
       empNo: fd.get('empNo') as string,
       title: fd.get('title') as string,
       initials: fd.get('initials') as string,
@@ -151,8 +165,23 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ user, onUpdate }) => {
         {/* Navigation Sidebar */}
         <div className="lg:col-span-1 space-y-4">
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 mb-6 text-center">
-             <div className="w-24 h-24 bg-emerald-100 rounded-full mx-auto mb-4 border-4 border-white shadow-lg flex items-center justify-center text-4xl font-black text-emerald-700">
-                {user.name.charAt(0)}
+             <div className="relative group mx-auto mb-4 w-24 h-24">
+                <div className="w-24 h-24 bg-emerald-100 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-4xl font-black text-emerald-700 overflow-hidden">
+                  {tempProfilePic ? (
+                    <img src={tempProfilePic} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    user.name.charAt(0)
+                  )}
+                </div>
+                {isEditing && (
+                  <button 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="absolute bottom-0 right-0 bg-emerald-600 text-white p-2 rounded-full shadow-lg hover:bg-emerald-700 transition-all hover:scale-110"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                  </button>
+                )}
+                <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageUpload} />
              </div>
              <h3 className="font-black text-gray-900">{user.name}</h3>
              <p className="text-[10px] text-emerald-600 font-black uppercase tracking-widest mt-1">{user.empNo || 'EMP NO PENDING'}</p>

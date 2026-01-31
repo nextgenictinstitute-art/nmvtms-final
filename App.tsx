@@ -68,14 +68,18 @@ const Layout: React.FC<{ user: User, onLogout: () => void, children: React.React
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-emerald-950 text-white transform transition-transform duration-200 lg:relative lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="p-8">
-          <h1 className="text-2xl font-black flex items-center gap-3">
-            <span className="bg-white text-emerald-900 w-10 h-10 flex items-center justify-center rounded-xl shadow-lg">N</span>
-            Vidyalaya
-          </h1>
-          <p className="text-emerald-400 text-[10px] font-black uppercase tracking-[3px] mt-2">Edu Portal v2.0</p>
+        <div className="p-8 text-center border-b border-white/5 mb-4">
+          <div className="w-16 h-16 rounded-2xl bg-white mx-auto mb-4 flex items-center justify-center text-emerald-950 font-black text-2xl shadow-xl overflow-hidden ring-4 ring-emerald-900">
+            {user.profilePic ? (
+              <img src={user.profilePic} alt="Avatar" className="w-full h-full object-cover" />
+            ) : (
+              user.name.charAt(0)
+            )}
+          </div>
+          <h1 className="text-xl font-black">{user.name.split(' ')[0]}</h1>
+          <p className="text-emerald-400 text-[10px] font-black uppercase tracking-[3px] mt-1">{user.role}</p>
         </div>
-        <nav className="mt-8 px-4 space-y-1">
+        <nav className="mt-4 px-4 space-y-1">
           {navItems.map((item) => (
             <button key={item.path} onClick={() => { navigate(item.path); setSidebarOpen(false); }} className="w-full flex items-center gap-4 px-5 py-3.5 rounded-2xl hover:bg-emerald-900/50 transition-all text-emerald-100/70 hover:text-white font-bold text-sm">
               {item.icon} {item.name}
@@ -108,7 +112,13 @@ const Layout: React.FC<{ user: User, onLogout: () => void, children: React.React
               <p className="text-sm font-black text-gray-900">{user.name}</p>
               <p className="text-[10px] text-emerald-600 font-black uppercase tracking-widest">{user.role}</p>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-700 font-black border-2 border-emerald-500 shadow-sm">{user.name.charAt(0)}</div>
+            <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-700 font-black border-2 border-emerald-500 shadow-sm overflow-hidden">
+              {user.profilePic ? (
+                <img src={user.profilePic} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                user.name.charAt(0)
+              )}
+            </div>
           </div>
         </header>
         <div className="p-8">{children}</div>

@@ -70,6 +70,7 @@ const TeachersList: React.FC = () => {
       assignedClass: assignedClassString,
       contact: fd.get('contact') as string,
       active: editingTeacher ? editingTeacher.active : true,
+      profilePic: editingTeacher?.profilePic,
       
       // Syncing all fields from teacher profile schema
       empNo: fd.get('empNo') as string,
@@ -269,8 +270,12 @@ const TeachersList: React.FC = () => {
                 <tr key={t.id} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-4">
-                       <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-black uppercase shadow-inner">
-                         {t.name.charAt(0)}
+                       <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-black uppercase shadow-inner overflow-hidden ring-2 ring-emerald-500/20">
+                         {t.profilePic ? (
+                           <img src={t.profilePic} alt="T" className="w-full h-full object-cover" />
+                         ) : (
+                           t.name.charAt(0)
+                         )}
                        </div>
                        <div>
                           <div className="font-black text-gray-900 uppercase">{t.title} {t.name}</div>
